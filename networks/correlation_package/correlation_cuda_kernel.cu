@@ -385,14 +385,14 @@ int correlation_forward_cuda_kernel(at::Tensor& output,
 
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(input1.type(), "channels_first_fwd_1", ([&] {
 
-  channels_first<scalar_t><<<blocks_grid,threads_block, 0, stream>>>(
+  channels_first<scalar_t><<<blocks_grid,threads_block>>>(
       input1.data<scalar_t>(), rInput1.data<scalar_t>(), nInputChannels, inputHeight, inputWidth, pad_size);
 
   }));
 
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(input2.type(), "channels_first_fwd_2", ([&] {
 
-  channels_first<scalar_t><<<blocks_grid,threads_block, 0, stream>>> (
+  channels_first<scalar_t><<<blocks_grid,threads_block>>> (
       input2.data<scalar_t>(), rInput2.data<scalar_t>(), nInputChannels, inputHeight, inputWidth, pad_size);
 
   }));
@@ -402,7 +402,7 @@ int correlation_forward_cuda_kernel(at::Tensor& output,
 
   AT_DISPATCH_FLOATING_TYPES_AND_HALF(input1.type(), "correlation_forward", ([&] {
 
-   correlation_forward<scalar_t><<<totalBlocksCorr, threadsPerBlock, 0, stream>>> 
+   correlation_forward<scalar_t><<<totalBlocksCorr, threadsPerBlock>>> 
                         (output.data<scalar_t>(), nOutputChannels, outputHeight, outputWidth,
                          rInput1.data<scalar_t>(), nInputChannels, inputHeight, inputWidth,
                          rInput2.data<scalar_t>(),
@@ -494,7 +494,7 @@ int correlation_backward_cuda_kernel(
 
     AT_DISPATCH_FLOATING_TYPES_AND_HALF(input1.type(), "lltm_forward_cuda", ([&] {
 
-        channels_first<scalar_t><<<blocks_grid, threads_block, 0, stream>>>(
+        channels_first<scalar_t><<<blocks_grid, threads_block>>>(
             input1.data<scalar_t>(),
             rInput1.data<scalar_t>(),
             nInputChannels,
@@ -506,7 +506,7 @@ int correlation_backward_cuda_kernel(
 
     AT_DISPATCH_FLOATING_TYPES_AND_HALF(input2.type(), "lltm_forward_cuda", ([&] {
 
-        channels_first<scalar_t><<<blocks_grid, threads_block, 0, stream>>>(
+        channels_first<scalar_t><<<blocks_grid, threads_block>>>(
             input2.data<scalar_t>(),
             rInput2.data<scalar_t>(),
             nInputChannels,
@@ -524,7 +524,7 @@ int correlation_backward_cuda_kernel(
       AT_DISPATCH_FLOATING_TYPES_AND_HALF(input2.type(), "lltm_forward_cuda", ([&] {
 
 
-          correlation_backward_input1<scalar_t><<<totalBlocksCorr, threadsPerBlock, 0, stream>>> (
+          correlation_backward_input1<scalar_t><<<totalBlocksCorr, threadsPerBlock>>> (
               n, gradInput1.data<scalar_t>(), nInputChannels, inputHeight, inputWidth,
               gradOutput.data<scalar_t>(), nOutputChannels, outputHeight, outputWidth,
               rInput2.data<scalar_t>(),
@@ -540,7 +540,7 @@ int correlation_backward_cuda_kernel(
 
       AT_DISPATCH_FLOATING_TYPES_AND_HALF(rInput1.type(), "lltm_forward_cuda", ([&] {
 
-        correlation_backward_input2<scalar_t><<<totalBlocksCorr, threadsPerBlock, 0, stream>>>(
+        correlation_backward_input2<scalar_t><<<totalBlocksCorr, threadsPerBlock>>>(
             n, gradInput2.data<scalar_t>(), nInputChannels, inputHeight, inputWidth,
             gradOutput.data<scalar_t>(), nOutputChannels, outputHeight, outputWidth,
             rInput1.data<scalar_t>(),
